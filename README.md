@@ -2,17 +2,32 @@
 
 A web platform that helps people find healthy food in food deserts and low-income neighborhoods.
 
-## Core features
-1. **Healthy food finder** – map nearby grocery stores, farmers markets, food banks, and corner stores that carry fresh/healthy options.
-2. **Coupons & deals** – surface discounts on healthy food (store deals, SNAP/WIC-eligible items, Double Up Food Bucks-style programs).
-3. **Fast food, made healthier** – for areas where fast food is the main option, show the healthiest menu picks and smart swaps at nearby restaurants.
+## Features
+1. **Healthy food finder** – map of nearby grocery stores, farmers markets, and food banks, with SNAP/EBT acceptance from USDA data and a USDA food-desert check for your area.
+2. **Deals** – live sale prices on healthy staples at nearby Kroger-family stores, plus links to SNAP, WIC, and Double Up Food Bucks.
+3. **Fast food, made healthier** – better picks and easy swaps at the fast food chains closest to you.
+
+## Run it locally
+Two terminals:
+```bash
+# 1) backend
+cd backend
+cp .env.example .env
+npm install
+npm run dev
+
+# 2) frontend
+cd frontend
+npm install
+npm run dev
+```
+Open http://localhost:5173.
 
 ## Folder layout
-- `docs/` – notes, requirements, research, API ideas
-- `frontend/` – web app UI
-- `backend/` – API, data processing, integrations
-- `data/` – datasets (e.g. USDA Food Access Research Atlas), sample data
+- `frontend/` – React web app
+- `backend/` – Express API that talks to USDA, OpenStreetMap, and Kroger
+- `docs/` – notes, requirements, research
+- `data/` – datasets
 - `design/` – mockups, logos, wireframes
 
-## Status
-Just set up. Built vibe-coding style to practice LLM tooling.
+Built vibe-coding style to practice LLM tooling.

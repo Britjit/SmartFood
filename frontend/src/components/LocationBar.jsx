@@ -1,25 +1,26 @@
 import { useState } from 'react'
-import { geocodeZip, getBrowserLocation } from '../lib/places'
+import { api, getBrowserLocation } from '../lib/api'
 
 export default function LocationBar({ onLocation, onError }) {
   const [zip, setZip] = useState('')
+  const [busy, setBusy] = useState(false)
 
-  async function submitZip(e) {
-    e.preventDefault()
-    if (!/^\d{5}$/.test(zip)) return onError('Enter a 5-digit zip code.')
+  async function run(fn) {
+    setBusy(true)
+    onError('')
     try {
-      onLocation(await geocodeZip(zip))
+      onLocation(await fn())
     } catch (err) {
       onError(err.message)
+    } finally {
+      setBusy(false)
     }
   }
 
-  async function useMyLocation() {
-    try {
-      onLocation(await getBrowserLocation())
-    } catch (err) {
-      onError(err.message)
-    }
+  function submitZip(e) {
+    e.preventDefault()
+    if (!/^\d{5}$/.test(zip)) return onError('Enter a 5-digit zip code.')
+    run(() => api.geocode(zip))
   }
 
   return (
@@ -31,8 +32,8 @@ export default function LocationBar({ onLocation, onError }) {
         inputMode="numeric"
         maxLength={5}
       />
-      <button type="submit">Search</button>
-      <button type="button" className="secondary" onClick={useMyLocation}>
+      <button type="submit" disabled={busy}>Search</button>
+      <button type="button" className="secondary" disabled={busy} onClick={() => run(getBrowserLocation)}>
         Use my location
       </button>
     </form>

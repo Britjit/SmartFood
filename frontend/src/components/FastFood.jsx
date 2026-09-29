@@ -1,4 +1,5 @@
-import { chains, generalTips, findChain } from '../data/fastfood'
+import { useEffect, useState } from 'react'
+import { api, findChain } from '../lib/api'
 
 function ChainCard({ chain, subtitle }) {
   return (
@@ -22,11 +23,21 @@ function ChainCard({ chain, subtitle }) {
 }
 
 export default function FastFood({ location, places }) {
-  // Nearby fast food spots that match a chain we have tips for (closest one per chain)
+  const [data, setData] = useState(null)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    api.fastfood().then(setData).catch((e) => setError(e.message))
+  }, [])
+
+  if (error) return <p className="status error">{error}</p>
+  if (!data) return <p className="muted">Loading…</p>
+
+  // Closest location of each chain we have tips for
   const seen = new Set()
   const nearby = []
   for (const p of places.filter((x) => x.category === 'fastfood')) {
-    const chain = findChain(p.brand || p.name)
+    const chain = findChain(data.chains, p.brand || p.name)
     if (chain && !seen.has(chain.name)) {
       seen.add(chain.name)
       nearby.push({ chain, place: p })
@@ -37,7 +48,7 @@ export default function FastFood({ location, places }) {
     <section>
       <h2>Quick rules that work anywhere</h2>
       <ul className="tips">
-        {generalTips.map((t) => (
+        {data.generalTips.map((t) => (
           <li key={t}>{t}</li>
         ))}
       </ul>
@@ -60,7 +71,7 @@ export default function FastFood({ location, places }) {
       <h2>All chains</h2>
       <p className="note">Menus change — check each chain's nutrition page for current items.</p>
       <div className="cards">
-        {chains.map((c) => (
+        {data.chains.map((c) => (
           <ChainCard key={c.name} chain={c} />
         ))}
       </div>

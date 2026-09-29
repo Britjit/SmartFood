@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet'
 import { useEffect } from 'react'
-import { CATEGORY_INFO } from '../lib/places'
+import { CATEGORY_INFO } from '../lib/api'
 
 function Recenter({ location }) {
   const map = useMap()
@@ -10,26 +10,45 @@ function Recenter({ location }) {
   return null
 }
 
-export default function FoodMap({ location, places }) {
+function AccessSummary({ access, nearestGrocery }) {
+  return (
+    <div className="summary">
+      {access && (
+        <p>
+          {access.foodDesert ? (
+            <strong className="flag">⚠️ USDA lists this area as a food desert</strong>
+          ) : access.lowAccess ? (
+            <strong className="flag">USDA lists this area as low access to grocery stores</strong>
+          ) : (
+            <strong>USDA does not list this area as a food desert</strong>
+          )}
+          <span className="small">
+            {' '}
+            · {access.urban ? 'Urban' : 'Rural'} census tract in {access.county}
+            {access.povertyRate != null && ` · ${Math.round(access.povertyRate)}% poverty rate`}
+            {access.lowVehicleAccess && ' · many households without a car'}
+          </span>
+        </p>
+      )}
+      {nearestGrocery ? (
+        <p>
+          Nearest grocery store: <strong>{nearestGrocery.name}</strong> ({nearestGrocery.miles.toFixed(1)} mi)
+        </p>
+      ) : (
+        <p className="flag">No grocery stores found within 2 miles.</p>
+      )}
+      {access && <p className="small">Source: {access.source}</p>}
+    </div>
+  )
+}
+
+export default function FoodMap({ location, places, access, loading }) {
   const healthy = places.filter((p) => p.category !== 'fastfood')
-  const nearestGrocery = places.find((p) => p.category === 'grocery')
+  const nearestGrocery = healthy.find((p) => p.category === 'grocery')
 
   return (
     <section>
-      {location && (
-        <div className="summary">
-          {nearestGrocery ? (
-            <p>
-              Nearest grocery store: <strong>{nearestGrocery.name}</strong> ({nearestGrocery.miles.toFixed(1)} mi)
-              {nearestGrocery.miles > 1 && (
-                <span className="flag"> — over 1 mile away, which the USDA uses as a low-access marker in urban areas.</span>
-              )}
-            </p>
-          ) : (
-            <p className="flag">No grocery stores found within about 2 miles. This area may be a food desert.</p>
-          )}
-        </div>
-      )}
+      {location && !loading && <AccessSummary access={access} nearestGrocery={nearestGrocery} />}
 
       <div className="legend">
         {Object.entries(CATEGORY_INFO)
@@ -57,18 +76,15 @@ export default function FoodMap({ location, places }) {
             key={p.id}
             center={[p.lat, p.lon]}
             radius={7}
-            pathOptions={{ color: CATEGORY_INFO[p.category].color, fillOpacity: 0.85 }}
+            pathOptions={{ color: '#fff', weight: 2, fillColor: CATEGORY_INFO[p.category].color, fillOpacity: 0.95 }}
           >
             <Popup>
-              <strong>{p.name}</strong>
+              <strong>{p.name || CATEGORY_INFO[p.category].label}</strong>
               <br />
               {CATEGORY_INFO[p.category].label} · {p.miles.toFixed(1)} mi
-              {p.address && (
-                <>
-                  <br />
-                  {p.address}
-                </>
-              )}
+              {p.acceptsSnap && <><br />✅ Accepts SNAP/EBT</>}
+              {p.incentiveProgram && <><br />💵 {p.incentiveProgram}</>}
+              {p.address && <><br />{p.address}</>}
             </Popup>
           </CircleMarker>
         ))}
@@ -78,11 +94,15 @@ export default function FoodMap({ location, places }) {
 
       {healthy.length > 0 && (
         <ul className="place-list">
-          {healthy.slice(0, 20).map((p) => (
+          {healthy.slice(0, 25).map((p) => (
             <li key={p.id}>
               <i style={{ background: CATEGORY_INFO[p.category].color }} />
               <div>
-                <strong>{p.name}</strong>
+                <strong>
+                  {p.name || CATEGORY_INFO[p.category].label}
+                  {p.acceptsSnap && <span className="badge">SNAP</span>}
+                  {p.incentiveProgram && <span className="badge gold">SNAP match</span>}
+                </strong>
                 <span>
                   {CATEGORY_INFO[p.category].label} · {p.miles.toFixed(1)} mi {p.address && `· ${p.address}`}
                 </span>

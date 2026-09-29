@@ -1,0 +1,45 @@
+.app { max-width: 1000px; margin: 0 auto; padding: 16px; }
+.header h1 { margin: 0; color: var(--green); }
+.header p { margin: 4px 0 16px; color: var(--muted); }
+
+.location-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.location-bar input { flex: 1; min-width: 160px; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; }
+button { padding: 10px 14px; border: none; border-radius: 8px; background: var(--green); color: #fff; font-size: 15px; cursor: pointer; }
+button.secondary { background: #fff; color: var(--green); border: 1px solid var(--green); }
+
+.status { margin: 6px 0; color: var(--muted); }
+.status.error { color: #c62828; }
+
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin: 16px 0; overflow-x: auto; }
+.tabs button { background: none; color: var(--muted); border-radius: 0; border-bottom: 3px solid transparent; white-space: nowrap; }
+.tabs button.active { color: var(--green); border-bottom-color: var(--green); font-weight: 600; }
+
+.map { height: 420px; border-radius: 12px; border: 1px solid var(--border); }
+.summary { background: var(--green-light); padding: 10px 14px; border-radius: 8px; margin-bottom: 10px; }
+.summary p { margin: 0; }
+.flag { color: #b45309; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 8px; font-size: 14px; }
+.legend i, .place-list i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+.hint { color: var(--muted); text-align: center; }
+
+.place-list { list-style: none; padding: 0; margin: 16px 0; }
+.place-list li { display: flex; align-items: center; gap: 12px; padding: 10px; border-bottom: 1px solid var(--border); background: #fff; }
+.place-list li div { flex: 1; display: flex; flex-direction: column; }
+.place-list li span { font-size: 13px; color: var(--muted); }
+.place-list a { color: var(--green); font-size: 14px; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+.card h3 { margin: 0 0 6px; }
+.card h4 { margin: 10px 0 4px; font-size: 14px; color: var(--green); }
+.card ul { margin: 0; padding-left: 18px; font-size: 14px; }
+.card a { color: var(--green); }
+.deal-text { font-size: 18px; font-weight: 600; color: var(--green); margin: 4px 0; }
+.tag { font-size: 12px; background: var(--green-light); color: var(--green); padding: 2px 8px; border-radius: 99px; }
+.muted { color: var(--muted); font-size: 14px; }
+.note { color: var(--muted); font-size: 14px; font-style: italic; }
+.toggle { display: block; margin-bottom: 10px; }
+.tips { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px 14px 14px 32px; }
+.tips li { margin: 4px 0; }
+
+.footer { margin-top: 32px; font-size: 12px; color: var(--muted); text-align: center; }
